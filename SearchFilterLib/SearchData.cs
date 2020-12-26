@@ -43,21 +43,15 @@ namespace SearchFilterLib
         public string[] Search(string searchText)
         {
             List<Item> findedItems = new List<Item>(_items);
+            List<string>[] allVarians = GenerateFindTextVariants(searchText.ToLower());
             for (int i = 0; i < findedItems.Count; i++)
             {
                 Item item = findedItems[i];
-                List<string> variants = new List<string>();
-                foreach (char c in searchText)
+
+                bool ok = false;
+                foreach (var variants in allVarians)
                 {
-                    string newCahr = c.ToString();
-
-                    for (int i1 = 0; i1 < variants.Count; i1++)
-                    {
-                        variants[i1] += newCahr;
-                    }
-                    variants.Add(newCahr);
-
-                    bool ok = false;
+                    ok = false;
                     foreach (var variant in variants)
                     {
                         if (item.Strings.Contains(variant))
@@ -68,17 +62,35 @@ namespace SearchFilterLib
                     }
                     if (!ok)
                     {
-                        item.Deleted = true;
                         break;
                     }
                 }
-                if (item.Deleted)
+                if (!ok)
                 {
                     findedItems.RemoveAt(i);
                     i--;
                 }
             }
             return findedItems.Select(x => x.Text).ToArray();
+        }
+
+        private List<string>[] GenerateFindTextVariants(string text)
+        {
+            List<string>[] variants = new List<string>[text.Length];
+                for (int i = 0; i < text.Length; i++)
+                {
+                    string cha = text[i].ToString();
+                    variants[i] = new List<string>();
+                    if (i > 0)
+                    {
+                        foreach (var variant in variants[i-1])
+                        {
+                            variants[i].Add(variant + cha);
+                        }
+                    }
+                    variants[i].Add(cha);
+                }
+            return variants;
         }
     }
 }

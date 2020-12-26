@@ -8,7 +8,6 @@ namespace SearchFilterLib
         {
             public string Text;
             public HashSet<string> Strings;
-            public bool Deleted = false;
         }
     }
 }
