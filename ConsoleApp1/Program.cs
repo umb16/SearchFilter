@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
@@ -27,7 +28,7 @@ namespace ConsoleApp1
             sw.Start();
             var sb = new StringBuilder(s);
 
-            for (int i = 0; i < 1000; i++)
+            for (int i = 0; i < 2000; i++)
             {
                 sb.Append(s);
             }
@@ -40,7 +41,10 @@ namespace ConsoleApp1
             var serchData = new SearchFilterLib.SearchData(strings);
             sw.Stop();
             Console.WriteLine(sw.ElapsedMilliseconds);
-
+            sw.Restart();
+            serchData.Update(strings);
+            sw.Stop();
+            Console.WriteLine(sw.ElapsedMilliseconds);
             while (true)
             {
                 string findText = Console.ReadLine();
@@ -48,8 +52,12 @@ namespace ConsoleApp1
                 string[] serchResult = serchData.Search(findText);
                 sw.Stop();
                 Console.WriteLine(sw.ElapsedMilliseconds);
+                HashSet<string> result = new HashSet<string>();
                 foreach (var item in serchResult)
                 {
+                    if (result.Contains(item))
+                        continue;
+                    result.Add(item);
                     Console.WriteLine(item);
                 }
             }
