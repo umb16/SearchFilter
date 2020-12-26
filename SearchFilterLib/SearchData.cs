@@ -9,13 +9,13 @@ namespace SearchFilterLib
 {
     public partial class SearchData
     {
-        private ConcurrentBag<Item> _items = new ConcurrentBag<Item>();
+        private ConcurrentBag<SearchItem> _items = new ConcurrentBag<SearchItem>();
         public SearchData(string[] strings)
         {
             Parallel.For(0, strings.Length, (i, state) =>
             {
                 string text = strings[i];
-                _items.Add(new Item() { Text = text, Strings = GetParts(text) });
+                _items.Add(new SearchItem() { Text = text, Strings = GetParts(text) });
             });
             Console.WriteLine(_items.Count);
         }
@@ -42,11 +42,11 @@ namespace SearchFilterLib
 
         public string[] Search(string searchText)
         {
-            List<Item> findedItems = new List<Item>(_items);
+            List<SearchItem> findedItems = new List<SearchItem>(_items);
             List<string>[] allVarians = GenerateFindTextVariants(searchText.ToLower());
             for (int i = 0; i < findedItems.Count; i++)
             {
-                Item item = findedItems[i];
+                SearchItem item = findedItems[i];
 
                 bool ok = false;
                 foreach (var variants in allVarians)
